@@ -1,0 +1,156 @@
+using MySql.Data.MySqlClient;
+using System;
+using System.Data;
+
+
+
+
+namespace PracticaVIIMySQLConsola
+{
+    class Interfaz
+    {
+
+
+        protected dbApi dbApi = new dbApi();
+
+
+        public void menu()
+        {
+
+
+            string opcionSelecc;
+
+
+            do
+            {
+                Console.WriteLine("\tMenu de Acciones para sus Registros");
+                Console.Write("\n    1 Mostrar   2 Agregar  3 Editar  4 Eliminar   5 Salir \n\tNumero de la acción a Realizar: ");
+
+
+                opcionSelecc = Console.ReadLine();
+                if (opcionSelecc != "5") 
+                { 
+                    Console.WriteLine("\n\tProcesamiento de Acción Solicitada ");
+                    opcionesDelMenu(opcionSelecc);
+
+
+                    Console.WriteLine("\n\tPresione cualquier tecla para regresar al menu de acciones");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
+            }
+            while (opcionSelecc != "5");
+            this.mrBones();
+        }
+         private void opcionesDelMenu(string opcionSelecc)
+        {
+
+            switch (opcionSelecc)
+            {
+                case "1": mostrar();
+                    break;
+                case "2": agregar();
+                    break;
+                case "3": editar();
+                    break;
+                case "4": eliminar();
+                    break;
+                case "5":
+                    break;
+                default:
+                    Console.WriteLine("\n\t\tError!! la opcion es incorrecta");
+                    break;
+            }
+        }
+        private void eliminar()
+        {
+            this.dbApi.mostrarDatosDb();
+
+
+            Console.Write("\n\tPor Favor escriba el id de la tupla a eliminar o \"c\" para cancelar: ");
+            string entradaUsuario = Console.ReadLine();
+
+
+            if (entradaUsuario == "c" || entradaUsuario == "C")
+                return;
+            else
+            {
+                Console.Write("\n\tRealmente quiere editar la tupla con el id " + entradaUsuario + " (s para continuar):");
+            string corroboracion = Console.ReadLine();
+
+
+                if (corroboracion == "s" || corroboracion == "S") 
+                { 
+                    int entradaDeUsuario;
+                    if (Int32.TryParse(entradaUsuario, out entradaDeUsuario))
+                    {
+                        if (this.dbApi.verificarExistencia(entradaDeUsuario))
+                            this.dbApi.ejecutarConsulta("DELETE FROM persona WHERE id=" + entradaDeUsuario);
+                        else
+                            Console.WriteLine("\n\t\tEl id existe, checalo!!");
+                    }
+                    else
+                        Console.WriteLine("\n\tVerifique el id, que sea entero!!");
+                }
+            }
+        }
+
+
+        private void editar()
+        {
+            this.dbApi.mostrarDatosDb();
+
+
+            Console.Write("\n\tPor Favor escriba el id para editar o \"c\" para cancelar: ");
+            string entradaUsuario = Console.ReadLine();
+            if (entradaUsuario == "c" || entradaUsuario == "C")
+                return;
+            else 
+            {
+                Console.Write("\n\tRealmente quiere editar el id " + entradaUsuario + " (s para continuar):");
+            string corroboracion = Console.ReadLine();
+
+
+                if (corroboracion == "s" || corroboracion == "S") 
+                { 
+                    int entradaDeUsuario;
+                    if (Int32.TryParse(entradaUsuario, out entradaDeUsuario))
+                    {
+                        if (this.dbApi.verificarExistencia(entradaDeUsuario)) 
+                        {
+                            string valores = "";
+                            Console.WriteLine("\t\tEditando id: " + entradaDeUsuario);
+                            Console.Write("\t\tNombre: ");
+                            valores += "nombre='" + Console.ReadLine() + "', ";
+                            Console.Write("\t\tCodigo: ");
+                            valores += "codigo='" + Console.ReadLine() + "', ";
+                            Console.Write("\t\tTelefono: ");
+                            valores += "telefono='" + Console.ReadLine() + "', ";
+                            Console.Write("\t\temail: ");
+                            valores += "email='" + Console.ReadLine() + "'";
+
+
+                            this.dbApi.ejecutarConsulta("UPDATE persona SET " + valores + " WHERE id=" + entradaDeUsuario);
+                        }
+                        else
+                            Console.WriteLine("\n\t\tEl id ingresado no existe, verifiquelo.");
+                    }
+                    else
+                        Console.WriteLine("\n\tVerifique el id que ingresó, solo se aceptan numeros enteros.");
+                }
+            }
+        }
+
+
+        
+
+        private void mrBones()
+        {
+             Console.WriteLine("\n\tPresione cualquier tecla finalizar ");
+             
+        }
+
+
+    }
+}
+
